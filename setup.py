@@ -1,8 +1,11 @@
 from setuptools import setup
+from pathlib import Path
 
 PACKAGE_NAME = 'broadcast_server'
 
-with open('./requirements.txt') as f:
+requirements_file = Path(__file__).parent.joinpath('requirements.txt')
+
+with open(requirements_file.resolve()) as f:
   requirements = f.read().splitlines()
 
 setup(

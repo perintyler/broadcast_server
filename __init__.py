@@ -2,4 +2,6 @@
 
 from .server import *
 
-from .broadcaster import Broadcaster
+from .broadcaster import Broadcaster, enable_trace, disable_trace
+
+enable_trace()

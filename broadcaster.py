@@ -3,9 +3,10 @@
 from inflection import underscore
 import websocket
 
-websocket.enableTrace(True)
-
 from .message import Message
+
+def enable_trace(): websocket.enableTrace(True)
+def disable_trace(): websocket.enableTrace(False)
 
 class Broadcaster(websocket.WebSocketApp):
   """Listens to other websockets and repackages the data for its clients
@@ -24,9 +25,6 @@ class Broadcaster(websocket.WebSocketApp):
         on_close   = lambda ws: print('closing', ws),
         **kwargs
     )
-
-  def on_open(self, ws):
-    pass
 
   def on_close(self, ws):
     print('closing', ws)

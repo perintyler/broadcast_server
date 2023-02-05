@@ -1,3 +1,3 @@
 """crypto_recommendations.broadcast package initialization"""
 
-from . import server
+from .server import *

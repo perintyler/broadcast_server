@@ -6,16 +6,14 @@ import gevent
 
 from .. import logs
 
-all_broadcasters = []
+__broadcasters__ = []
 
-def add_broadcaster(broadcaster): all_broadcasters.append(broadcaster)
-def remove_broadcaster(broadcaster): all_broadcasters.remove(broadcaster)
+def add_broadcaster(broadcaster): __broadcasters__.append(broadcaster)
+def remove_broadcaster(broadcaster): __broadcasters__.remove(broadcaster)
 
 def listen_to(websocket):
-  for broadcaster in all_broadcasters:
+  for broadcaster in __broadcasters__:
     broadcaster.listen_to(websocket)
-
-  broadcast.server.start_broadcasting()
 
   while not websocket.closed:
     message = websocket.receive()
@@ -25,19 +23,20 @@ def listen_to(websocket):
     gevent.sleep(0.1)
 
   logs.client_event('client disconnected', websocket.origin)
-  for broadcaster in all_broadcasters:
+  for broadcaster in __broadcasters__:
     broadcaster.remove_client(ws)
 
   if num_clients() == 0:
-    broadcast.server.stop_broadcasting()
+    for broadcaster in __broadcasters__:
+      broadcaster.close()
 
 def num_clients():
-  return 0 if not all_broadcasters else all_broadcasters[0].num_clients()
+  return 0 if not __broadcasters__ else __broadcasters__[0].num_clients()
 
 def start_broadcasting():
   """called when the first connection is made"""
   # logs.application_event('start listening')
-  for websocket in all_broadcasters:
+  for websocket in __broadcasters__:
     if not websocket.is_idle(): continue
     def thread(*args): websocket.run_forever()
     _thread.start_new_thread(thread, ())
@@ -46,7 +45,7 @@ def start_broadcasting():
 def stop_broadcasting():
   """called when all connections are closed"""
   # logs.application_event('stop listening')
-  for websocket in all_broadcasters:
+  for websocket in __broadcasters__:
     if websocket.is_idle(): continue
     logs.client_event('closing connection', websocket.origin)
     websocket.close()

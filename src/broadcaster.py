@@ -31,7 +31,7 @@ class Broadcaster(websocket.WebSocketApp):
   def on_close(self, ws):
     print('closing', ws)
 
-  def listen_to(self, client):
+  def connect(self, client):
     self.clients[client.origin] = client
 
   def remove_client(self, client):

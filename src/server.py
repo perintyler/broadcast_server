@@ -3,13 +3,19 @@
 import _thread
 import threading
 import gevent
-
-from .. import logs
+"""broadcast_server.server"""
 
 __broadcasters__ = []
 
-def add_broadcaster(broadcaster): __broadcasters__.append(broadcaster)
-def remove_broadcaster(broadcaster): __broadcasters__.remove(broadcaster)
+def add_broadcaster(broadcaster):
+  __broadcasters__.append(broadcaster)
+
+def remove_broadcaster(broadcaster):
+  if not broadcaster.is_idle(): broadcaster.close()
+  __broadcasters__.remove(broadcaster)
+
+def has_broadcaster(): 
+  return len(__broadcasters__) != 0
 
 def connect(websocket):
   for broadcaster in __broadcasters__:
@@ -17,12 +23,10 @@ def connect(websocket):
 
   while not websocket.closed:
     message = websocket.receive()
-    logs.client_event('recieved message', websocket.origin, message=message)
      # Sleep to prevent constant context-switches. This does
      # not affect update speed, which happens on another thread
     gevent.sleep(0.1)
 
-  logs.client_event('client disconnected', websocket.origin)
   for broadcaster in __broadcasters__:
     broadcaster.remove_client(ws)
 
@@ -52,6 +56,6 @@ def stop_broadcasting():
     # else:
     #   logs.warn('tried closing an already closed client', origin=websocket.origin)
 
-  logs.application_event(f'{threading.active_count()} threads after stopping broadcast')
+  # logs.application_event(f'{threading.active_count()} threads after stopping broadcast')
   for thread in threading.enumerate(): 
     logs.application_event(f'{thread} is still open')

@@ -4,6 +4,8 @@ import _thread
 import threading
 import gevent
 
+from .. import logs
+
 __broadcasters__ = []
 
 def add_broadcaster(broadcaster):
@@ -21,7 +23,7 @@ def num_clients():
 
 def start_broadcasting():
   """called when the first connection is made"""
-  # logs.application_event('start listening')
+  logs.application_event('start listening')
   for broadcaster in __broadcasters__:
     if not broadcaster.is_idle(): continue
     def thread(*args): broadcaster.run_forever()
@@ -30,7 +32,7 @@ def start_broadcasting():
 
 def stop_broadcasting():
   """called when all connections are closed"""
-  # logs.application_event('stop listening')
+  logs.application_event('stop listening')
   for broadcaster in __broadcasters__:
     if broadcaster.is_idle(): continue
     logs.client_event('closing connection', broadcaster.origin)
@@ -48,7 +50,7 @@ def connect(websocket):
 
   while not websocket.closed:
     message = websocket.receive()
-
+    logs.application_event('recieved msg', message=msg)
      # Sleep to prevent constant context-switches. This does
      # not affect update speed, which happens on another thread
     gevent.sleep(0.1)

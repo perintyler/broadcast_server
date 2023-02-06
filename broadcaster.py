@@ -3,6 +3,8 @@
 from inflection import underscore
 import websocket
 
+from .. import logs
+
 from .message import Message
 
 def enable_trace(): websocket.enableTrace(True)
@@ -11,8 +13,8 @@ def disable_trace(): websocket.enableTrace(False)
 class Broadcaster(websocket.WebSocketApp):
   """Listens to other websockets and repackages the data for its clients
 
-  A Client Websocket App that connects to an external websocket
-  server to forward messages through this server. To create an
+  A Client Websocket App that connects to an external websocket and
+  repackages the data for the websocket client connected to the server,,  forward messages through this server. To create an
   event callback for event 'eventName', define a function named
   on_event_name, and it will automatically be called.
   """
@@ -27,7 +29,7 @@ class Broadcaster(websocket.WebSocketApp):
     )
 
   def on_close(self, ws):
-    print('closing', ws)
+    logs.application_event('closing broadcaster', ws)
 
   def connect(self, client):
     self.clients[client.origin] = client

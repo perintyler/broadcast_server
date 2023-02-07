@@ -42,8 +42,8 @@ def test_message():
   message1 = Message.create(event='some-event', prop1='prop1', prop2='prop2')
   assert message1.event == 'some-event'
   assert message1['prop1'] == 'prop1'
-  assert message1.stringify() == '{"event":"some-event","prop1":"prop1","prop2":"prop2"}'
-  
+  assert message1.stringify() \
+      == '{"event": "some-event", "prop1": "prop1", "prop2": "prop2"}'
   message2 = Message('[1, 2, 3]')
   assert message2.event == 'data_message'
   assert message2.stringify() == '[1, 2, 3]'

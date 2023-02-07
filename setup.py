@@ -9,6 +9,6 @@ with open('./requirements.txt') as f:
 
 setup(
   name=PACKAGE_NAME,
-  package_dir={PACKAGE_NAME: './src'},
+  package_dir={PACKAGE_NAME: PACKAGE_NAME},
   install_requires=requirements # requirements outlined in `requirements.txt`
 )

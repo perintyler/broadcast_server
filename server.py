@@ -50,7 +50,7 @@ def connect(websocket):
 
   while not websocket.closed:
     message = websocket.receive()
-    logs.application_event('recieved msg', message=msg)
+    logs.application_event('recieved msg', message=message)
      # Sleep to prevent constant context-switches. This does
      # not affect update speed, which happens on another thread
     gevent.sleep(0.1)

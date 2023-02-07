@@ -11,12 +11,10 @@ def enable_trace(): websocket.enableTrace(True)
 def disable_trace(): websocket.enableTrace(False)
 
 class Broadcaster(websocket.WebSocketApp):
-  """Listens to other websockets and repackages the data for its clients
+  """Listens to other websockets and broadcasts the data to its clients
 
-  A Client Websocket App that connects to an external websocket and
-  repackages the data for the websocket client connected to the server,,  forward messages through this server. To create an
-  event callback for event 'eventName', define a function named
-  on_event_name, and it will automatically be called.
+  To create an event callback for event 'eventName', subclass `Broadcaster`
+  and define an instance function named `on_event_name`.
   """
 
   def __init__(self, wss, **kwargs):

@@ -43,12 +43,12 @@ def test_add_broadcaster():
 def test_remove_broadcaster():
   server.remove_broadcaster(broadcaster)
   assert not server.has_broadcaster()
-  assert(broadcaster.is_idle())
+  assert(broadcaster.is_broadcasting())
 
 def test_broadcast():
   server.add_broadcaster(broadcaster)
   for client in clients: 
-    broadcaster.connect(client)
+    broadcaster.add_client(client)
   test_msg = 'this is a test'
   broadcaster.broadcast(test_message=test_msg)
   for client in clients:

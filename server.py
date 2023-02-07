@@ -12,7 +12,7 @@ def add_broadcaster(broadcaster):
   __broadcasters__.append(broadcaster)
 
 def remove_broadcaster(broadcaster):
-  if not broadcaster.is_idle(): broadcaster.close()
+  if not broadcaster.is_broadcasting(): broadcaster.close()
   __broadcasters__.remove(broadcaster)
 
 def has_broadcaster(): 
@@ -25,7 +25,7 @@ def start_broadcasting():
   """called when the first connection is made"""
   logs.application_event('start listening')
   for broadcaster in __broadcasters__:
-    if not broadcaster.is_idle(): continue
+    if not broadcaster.is_broadcasting(): continue
     def thread(*args): broadcaster.run_forever()
     _thread.start_new_thread(thread, ())
     gevent.sleep(0.1)
@@ -34,7 +34,7 @@ def stop_broadcasting():
   """called when all connections are closed"""
   logs.application_event('stop listening')
   for broadcaster in __broadcasters__:
-    if broadcaster.is_idle(): continue
+    if broadcaster.is_broadcasting(): continue
     logs.client_event('closing connection', broadcaster.origin)
     broadcaster.close()
 
@@ -42,9 +42,9 @@ def stop_broadcasting():
   for thread in threading.enumerate(): 
     logs.application_event(f'{thread} is still open')
 
-def connect(websocket):
+def connect_client(websocket):
   for broadcaster in __broadcasters__:
-    broadcaster.connect(websocket)
+    broadcaster.add_client(websocket)
   
   start_broadcasting()
 

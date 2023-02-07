@@ -28,10 +28,7 @@ class Broadcaster(websocket.WebSocketApp):
         **kwargs
     )
 
-  def on_close(self, ws):
-    logs.application_event('closing broadcaster', ws)
-
-  def connect(self, client):
+  def add_client(self, client):
     self.clients[client.origin] = client
 
   def remove_client(self, client):
@@ -65,6 +62,9 @@ class Broadcaster(websocket.WebSocketApp):
       if callable(event_handler):
         event_handler(msg.contents)
 
+  def on_close(self, ws):
+    logs.application_event('closing broadcaster', ws)
+
   def on_error(self, *args, **kwargs):
     """TODO"""
     print('handle_error', args, kwargs)
@@ -73,6 +73,6 @@ class Broadcaster(websocket.WebSocketApp):
     """TODO"""
     print('handle_shutdown', args, kwargs)
   
-  def is_idle(self):
+  def is_broadcasting(self):
     return not self.sock
 

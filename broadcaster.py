@@ -3,8 +3,6 @@
 from inflection import underscore
 import websocket
 
-from .. import logs
-
 from .message import Message
 
 def enable_trace(): websocket.enableTrace(True)
@@ -22,7 +20,7 @@ class Broadcaster(websocket.WebSocketApp):
     super().__init__(wss,
         on_message = self.on_message,
         on_error   = self.on_error,
-        on_close   = lambda ws: print('closing', ws),
+        on_close   = self.on_closes,
         **kwargs
     )
 
@@ -34,6 +32,9 @@ class Broadcaster(websocket.WebSocketApp):
 
   def num_clients(self):
     return len(self.clients)
+
+  def is_broadcasting(self):
+    return self.sock is not None
 
   def broadcast(self, **data):
     """Sends data to server clients"""
@@ -60,17 +61,12 @@ class Broadcaster(websocket.WebSocketApp):
       if callable(event_handler):
         event_handler(msg.contents)
 
-  def on_close(self, ws):
-    logs.application_event('closing broadcaster', ws)
+  def on_close(self, *args, **kwargs):
+    pass
 
   def on_error(self, *args, **kwargs):
-    """TODO"""
-    print('handle_error', args, kwargs)
+    pass
 
   def on_shutdown(self, *args, **kwargs):
-    """TODO"""
-    print('handle_shutdown', args, kwargs)
+    pass
   
-  def is_broadcasting(self):
-    return self.sock is not None
-

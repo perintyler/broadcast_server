@@ -14,14 +14,8 @@ class Message:
     else:
       return self.contents.get('event', 'data_message')
 
-  def is_list(self):
-    return isinstance(self.contents, list)
-
   def stringify(self):
     return json.dumps(self.contents)
-
-  def __add__(self, other_contents: dict):
-    return Message.create({**self.contents, **other_contents})
 
   def __getitem__(self, key):
     return self.contents[key]

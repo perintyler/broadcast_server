@@ -9,6 +9,6 @@ with open('./requirements.txt') as f:
 
 setup(
   name=PACKAGE_NAME,
-  package_dir={PACKAGE_NAME: PACKAGE_NAME},
+  package_dir={PACKAGE_NAME: '.'}, # source files in root folder of repo
   install_requires=requirements # requirements outlined in `requirements.txt`
 )

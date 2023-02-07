@@ -72,5 +72,5 @@ class Broadcaster(websocket.WebSocketApp):
     print('handle_shutdown', args, kwargs)
   
   def is_broadcasting(self):
-    return not self.sock
+    return self.sock is not None
 

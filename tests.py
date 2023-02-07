@@ -42,8 +42,8 @@ def test_add_broadcaster():
 
 def test_remove_broadcaster():
   server.remove_broadcaster(broadcaster)
+  assert not broadcaster.is_broadcasting()
   assert not server.has_broadcaster()
-  assert(broadcaster.is_broadcasting())
 
 def test_broadcast():
   server.add_broadcaster(broadcaster)

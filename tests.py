@@ -1,3 +1,4 @@
+"""broadcast_server.tests"""
 
 import json
 import asyncio
@@ -6,6 +7,7 @@ import pytest_asyncio
 
 from . import server
 from .broadcaster import Broadcaster
+from .message import Message
 
 import threading
 
@@ -35,6 +37,16 @@ class FakeClient:
 broadcaster = Broadcaster(None)
 clients = [client1,client2,client3] \
         = [FakeClient(f'client{index}') for index in range(3)]
+
+def test_message():
+  message1 = Message.create(event='some-event', prop1='prop1', prop2='prop2')
+  assert message1.event == 'some-event'
+  assert message1['prop1'] == 'prop1'
+  assert message1.stringify() == '{"event":"some-event","prop1":"prop1","prop2":"prop2"}'
+  
+  message2 = Message('[1, 2, 3]')
+  assert message2.event == 'data_message'
+  assert message2.stringify() == '[1, 2, 3]'
 
 def test_add_broadcaster():
   server.add_broadcaster(broadcaster)

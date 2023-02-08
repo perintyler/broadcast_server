@@ -20,7 +20,7 @@ class Broadcaster(websocket.WebSocketApp):
     super().__init__(wss,
         on_message = self.on_message,
         on_error   = self.on_error,
-        on_close   = self.on_closes,
+        on_close   = self.on_close,
         **kwargs
     )
 

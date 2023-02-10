@@ -45,7 +45,7 @@ def connect_client(websocket):
     gevent.sleep(0.1)
 
   for broadcaster in __broadcasters__:
-    broadcaster.remove_client(broadcaster)
+    broadcaster.remove_client(websocket)
 
   if num_clients() == 0:
     stop_broadcasting()

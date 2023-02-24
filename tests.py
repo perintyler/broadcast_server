@@ -35,8 +35,11 @@ class FakeClient:
     return json.loads(self.messages[index])
 
 broadcaster = Broadcaster(None)
-clients = [client1,client2,client3] \
-        = [FakeClient(f'client{index}') for index in range(3)]
+clients = (
+  client1,
+  client2,
+  client3
+) = [ FakeClient(f'client{index}') for index in range(3) ]
 
 def test_message():
   message1 = Message.create(event='some-event', prop1='prop1', prop2='prop2')

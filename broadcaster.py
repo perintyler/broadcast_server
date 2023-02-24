@@ -5,6 +5,8 @@ import websocket
 
 from .message import Message
 
+from .. import logs
+
 def enable_trace(): websocket.enableTrace(True)
 def disable_trace(): websocket.enableTrace(False)
 
@@ -28,7 +30,9 @@ class Broadcaster(websocket.WebSocketApp):
     self.clients[client.origin] = client
 
   def remove_client(self, client):
-    self.clients.pop(client.origin)
+    logs.application_event('removing client', client=client.origin)
+    if client in self.clients:
+      self.clients.pop(client.origin)
 
   def num_clients(self):
     return len(self.clients)
@@ -40,10 +44,16 @@ class Broadcaster(websocket.WebSocketApp):
     """Sends data to server clients"""
     message = Message.create(**data).stringify()
     for client in self.clients.values():
-      client.send(message)
+      try:
+        client.send(message)
+      except Exception as error:
+        if str(error) == 'Socket is dead':
+          logs.application_event('removing client', client=client.__dict__)
+          self.remove_client(client)
 
   def respond(self, **data):
     """Sends data back to the external websocket"""
+    if not self.sock: return
     message = Message.create(**data)
     self.send(message.stringify())
 
@@ -54,12 +64,19 @@ class Broadcaster(websocket.WebSocketApp):
 
   def on_message(self, msg):
     """Calls event handler if defined"""
+    logs.application_event('recieved message', message=msg)
     msg = Message(msg)
     if not self.message_filter(msg):
       callbackName = f'on_{underscore(msg.event)}' # 'eventName' -> 'on_event_name'
       event_handler = getattr(self, callbackName, None)
       if callable(event_handler):
         event_handler(msg.contents)
+
+  def start(self):
+    pass
+
+  def stop(self):
+    pass
 
   def on_close(self, *args, **kwargs):
     pass
